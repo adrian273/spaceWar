@@ -6,179 +6,35 @@
 import pygame
 import sys
 from pygame.locals import *
-from random import randint
+from Clases import AircrafWar
+from Clases import BackgroundGame as Background
+from Clases import EnemySprite
+
 
 ''' Constantes '''
 WIDTH = 900
 HEIGHT = 680
-
-''' nave espacial '''
-
-
-class aircrafWar(pygame.sprite.Sprite):
-
-    ''' iniciando pygame.sprite '''
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.spriteAircrafWar = pygame.image.load('sprites/nave.gif')
-
-        self.rect = self.spriteAircrafWar.get_rect()
-        self.rect.centerx = WIDTH / 2
-        self.rect.centery = HEIGHT - 65
-
-        self.listShoot = []
-        self.life = True
-        self.speedAircrafWar = 10
-
-        self.soundMissile = pygame.mixer.Sound('sounds/pistola_1.wav')
-
-    ''' dibujar sprite '''
-    def drawSpriteAircrafWar(self, surface):
-        surface.blit(self.spriteAircrafWar, self.rect)
-
-    def shootMissile(self, x, y):
-        myMissile = missile(x, y, 'sprites/balaFire.png', True)
-        self.listShoot.append(myMissile)
-        self.soundMissile.play()
-
-    ''' movimientos de la nave '''
-    def moveLeft(self):
-        if self.life is True:
-            self.rect.left -= self.speedAircrafWar
-            if self.rect.left <= 0:
-                self.rect.left = 0
-
-    def moveRight(self):
-        if self.life is True:
-            self.rect.right += self.speedAircrafWar
-            if self.rect.right > 880:
-                self.rect.right = 870
-
-    def moveTop(self):
-        if self.life is True:
-            self.rect.top -= self.speedAircrafWar
-            if self.rect.top < 10:
-                self.rect.top = 0
+LISTE = [] # lista de los enemigos
 
 
-''' creando los misiles '''
+def loadEnemy():
+    posx = 100
+    for e in range(1, 5):
+        enemy = EnemySprite.enemySprite(posx, 200, 400, 'sprites/enemi1.png', 'sprites/enemi1.png')
+        LISTE.append(enemy)
+        posx = posx + 200
 
+    posx = 100
+    for e in range(1, 5):
+        enemy = EnemySprite.enemySprite(posx, 100, 400, 'sprites/enemi1.png', 'sprites/enemi1.png')
+        LISTE.append(enemy)
+        posx = posx + 200
 
-class missile(pygame.sprite.Sprite):
-    def __init__(self, posx, posy, route, character):
-        pygame.sprite.Sprite.__init__(self)
-        self.missileImg = pygame.image.load(route)
-
-        self.rect = self.missileImg.get_rect()
-        self.rect.top = posy
-        self.rect.left = posx
-        self.speedMissile = 5
-
-        self.shootCharacter = character
-
-    def moveMissile(self):
-        if self.shootCharacter is True :
-            self.rect.top = self.rect.top - self.speedMissile
-        else :
-            self.rect.top = self.rect.top + self.speedMissile
-
-    def drawMissile(self, surface):
-        surface.blit(self.missileImg, self.rect)
-
-''' enemigo '''
-
-
-class enemySprite(pygame.sprite.Sprite):
-
-
-    def __init__(self,posx, posy):
-        pygame.sprite.Sprite.__init__(self)
-        self.spriteE1 = pygame.image.load('sprites/enemigo.png')
-        self.spriteE2 = pygame.image.load('sprites/enemig.gif')
-
-        self.listEnemy = [self.spriteE1, self.spriteE2]
-        self.posImagen = 0
-        self.spriteE = self.listEnemy[self.posImagen]
-
-        self.rect = self.spriteE.get_rect()
-        self.rect.top = posy
-        self.rect.left = posx
-
-        self.speedShoot = 2
-        self.speedE = 20
-        self.listShootE = []
-
-        self.timeChange = 1
-        self.rangeShoot = 5
-
-        self.RIGTH = True
-        self.count = 0
-        self.maxDecline = self.rect.top + 40
-
-    def drawEnemy(self, surface):
-        self.spriteE = self.listEnemy[self.posImagen]
-        surface.blit(self.spriteE, self.rect)
-
-    ''' comportamiento de enemigo '''
-    def behaviorEnemy(self, time):
-        self.__moveEnemy()
-        self.__attackEnemy()
-        if self.timeChange == time:
-            self.posImagen += 1
-            self.timeChange += 1
-            if self.posImagen > len(self.listEnemy) - 1 :
-                self.posImagen = 0
-
-
-    def __moveEnemy(self):
-        if self.count - 3:
-            self.__moveSide()
-        else :
-            self.__declineEnemy()
-
-    def __attackEnemy(self):
-        if (randint(0,100) < self.rangeShoot):
-            self.__shootEnemy()
-
-    def __shootEnemy(self):
-        x,y = self.rect.center
-        missileEnemy = missile(x, y, 'sprites/balaFire.png', False)
-        self.listShootE.append(missileEnemy)
-
-    def __declineEnemy(self):
-        if self.maxDecline == self.rect.top:
-            self.count = 0
-            self.maxDecline = self.rect.top + 40
-        else :
-            self.rect.top += 1
-
-    def __moveSide(self):
-        if self.RIGTH is True:
-            self.rect.left = self.rect.left + self.speedE
-            if self.rect.left > 500:
-                self.RIGTH = False
-                self.count += 1
-        else :
-            self.rect.left = self.rect.left - self.speedE
-            if self.rect.left < 0:
-                self.RIGTH = True
-
-
-''' Fondo de Juego '''
-
-
-class backgroundGame(pygame.sprite.Sprite):
-    def __init__(self, backgroundIMG):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.backgroundImg = pygame.image.load(backgroundIMG)
-        self.rect = self.backgroundImg.get_rect()
-
-    ''' dibujando fondo '''
-    def drawBackground(self, surface):
-        surface.blit(self.backgroundImg, self.rect)
-
+    posx = 100
+    for e in range(1, 5):
+        enemy = EnemySprite.enemySprite(posx, 0, 400, 'sprites/enemi1.png', 'sprites/enemi1.png')
+        LISTE.append(enemy)
+        posx = posx + 200
 
 def spaceWAR():
     ''' iniciando PYGAME '''
@@ -189,10 +45,11 @@ def spaceWAR():
     pygame.mixer.music.load('sounds/intro.mp3')
     pygame.mixer.music.play(3)
     ''' creando los objetos '''
-    BACKGROUND = backgroundGame('sprites/fondo-espacial.jpg')
-    PLAYER = aircrafWar()
-    ENEMY = enemySprite(100,100)
+    BACKGROUND = Background.backgroundGame('sprites/fondo-espacial.jpg')
+    PLAYER = AircrafWar.aircrafWar(WIDTH,HEIGHT)
+    #ENEMY = EnemySprite.enemySprite(100,100)
     TIME = pygame.time.Clock()
+    loadEnemy()
 
     while True:
         TIME.tick(60)
@@ -213,24 +70,47 @@ def spaceWAR():
                 elif event.key == K_s:
                     x, y = PLAYER.rect.center
                     PLAYER.shootMissile(x, y)
+                elif event.key == K_UP:
+                    PLAYER.moveTop()
+                elif event.key == K_DOWN:
+                    PLAYER.moveBottom()
                 elif event.key == K_q:
                     pygame.quit()
                     sys.exit()
 
         if len(PLAYER.listShoot) > 0:
-            for x in PLAYER.listShoot:
-                x.drawMissile(SCREEN)
-                x.moveMissile()
-            if x.rect.top < -10:
-                PLAYER.listShoot.remove(x)
-        if len(ENEMY.listShootE) > 0:
-            for x in ENEMY.listShootE:
-                x.drawMissile(SCREEN)
-                x.moveMissile()
-            if x.rect.top < -10:
-                ENEMY.listShootE.remove(x)
-        ENEMY.behaviorEnemy(TIME2)
-        ENEMY.drawEnemy(SCREEN)
+            for player in PLAYER.listShoot:
+                player.drawMissile(SCREEN)
+                player.moveMissile()
+                if player.rect.top < -10:
+                    PLAYER.listShoot.remove(player)
+                else:
+                    for e in LISTE:
+                        if player.rect.colliderect(e.rect):
+                            LISTE.remove(e)
+                            PLAYER.listShoot.remove(player)
+
+        if len(LISTE) > 0:
+            for e in LISTE:
+                e.behaviorEnemy(TIME2)
+                e.drawEnemy(SCREEN)
+                if e.rect.colliderect(PLAYER.rect):
+                    pass
+                if len(e.listShootE) > 0:
+                    for m in e.listShootE:
+                        m.drawMissile(SCREEN)
+                        m.moveMissile()
+                        if m.rect.colliderect(PLAYER.rect):
+                            pass
+                        if m.rect.top > 880:
+                            e.listShootE.remove(m)
+                        else:
+                            for d in PLAYER.listShoot:
+                                if m.rect.colliderect(d.rect):
+                                    PLAYER.listShoot.remove(d)
+                                    e.listShootE.remove(m)
+
+
         PLAYER.drawSpriteAircrafWar(SCREEN)
         pygame.display.update()
 
