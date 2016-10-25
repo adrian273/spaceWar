@@ -2,21 +2,35 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-''' importando librerias '''
+'''
+    @importando librerias
+'''
 import pygame
 import sys
 from pygame.locals import *
 from Clases import AircrafWar
 from Clases import BackgroundGame as Background
 from Clases import EnemySprite
+from Clases import Main
+from Clases import About_game as about
 
-
-''' Constantes '''
+'''
+    __________________________________________________________________________________________________
+    @Constantes
+'''
 WIDTH = 900
 HEIGHT = 680
-LISTE = [] # lista de los enemigos
+LISTE = []  # lista de los enemigos
+LIFEPlAYER = 3
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 
+pygame.init()
+pygame.display.set_caption(' Space War v0.0.1')
 
+'''
+    __________________________________________________________________________________________________
+    @cargar los  enemigos
+'''
 def loadEnemy():
     posx = 100
     for e in range(1, 5):
@@ -36,24 +50,24 @@ def loadEnemy():
         LISTE.append(enemy)
         posx = posx + 200
 
+'''
+    __________________________________________________________________________________________________
+    @iniciar el juego
+'''
 def spaceWAR():
-    ''' iniciando PYGAME '''
-    pygame.init()
-
-    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
-    pygame.display.set_caption(' Space War v0.0.1')
     pygame.mixer.music.load('sounds/intro.mp3')
     pygame.mixer.music.play(3)
     ''' creando los objetos '''
     BACKGROUND = Background.backgroundGame('sprites/fondo-espacial.jpg')
-    PLAYER = AircrafWar.aircrafWar(WIDTH,HEIGHT)
-    #ENEMY = EnemySprite.enemySprite(100,100)
+    PLAYER = AircrafWar.aircrafWar(WIDTH, HEIGHT)
     TIME = pygame.time.Clock()
     loadEnemy()
-
+    TXTtime = pygame.font.SysFont('Arial',20)
+    count = 0
     while True:
         TIME.tick(60)
         TIME2 = pygame.time.get_ticks() / 1000
+        TXTRenderTime = TXTtime.render("Tiempo : " + str(TIME2), 0 , (136, 34, 115))
         BACKGROUND.drawBackground(SCREEN)
         ''' eventos '''
         for event in pygame.event.get():
@@ -78,17 +92,21 @@ def spaceWAR():
                     pygame.quit()
                     sys.exit()
 
+
         if len(PLAYER.listShoot) > 0:
             for player in PLAYER.listShoot:
                 player.drawMissile(SCREEN)
                 player.moveMissile()
                 if player.rect.top < -10:
                     PLAYER.listShoot.remove(player)
+                    print "remove player in pos -10"
                 else:
                     for e in LISTE:
                         if player.rect.colliderect(e.rect):
                             LISTE.remove(e)
                             PLAYER.listShoot.remove(player)
+                            count += 10
+                            #sacar el largo despues **
 
         if len(LISTE) > 0:
             for e in LISTE:
@@ -109,10 +127,81 @@ def spaceWAR():
                                 if m.rect.colliderect(d.rect):
                                     PLAYER.listShoot.remove(d)
                                     e.listShootE.remove(m)
+                                    count += 3
 
+        txtCountEnemy = TXTtime.render("puntos :" + str(count), 0 , (255,0,46))
+        txtLifePlayer = TXTtime.render("Vidas:" + str(LIFEPlAYER), 0, (255,0,46))
 
+        SCREEN.blit(txtLifePlayer,(390,0))
+        SCREEN.blit(txtCountEnemy,(780,0))
+        SCREEN.blit(TXTRenderTime,(0,0))
         PLAYER.drawSpriteAircrafWar(SCREEN)
         pygame.display.update()
 
+'''
+    ________________________________________________________________________________________________________
+    @para salir del juego
+'''
+def exitGame():
+    sys.exit(0)
+
+'''
+    _________________________________________________________________________________________________________
+    @Creditos
+'''
+def aboutGame():
+    posx = WIDTH / 4
+    background = Background.backgroundGame('sprites/fondo.jpg')
+    aboutG = about.about_game(100,100,"sprites/kdrscript.png")
+    aboutA = about.about_game(20,400,"sprites/author.png")
+    aboutV = about.about_game(posx,600,"sprites/volver.png")
+    while True:
+        for event in pygame.event.get():
+            ''' para salir del juego '''
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN:
+                if event.key == K_m:
+                    optionGame()
+
+        background.drawBackground(SCREEN)
+        aboutG.draw(SCREEN)
+        aboutA.draw(SCREEN)
+        aboutV.draw(SCREEN)
+        aboutG.moveKDR()
+        pygame.display.update()
+
+'''
+    ________________________________________________________________________________________________________
+    @Opciones del juego
+'''
+def optionGame():
+    exit = False
+
+    option = [
+        ("Jugar",spaceWAR),
+        ("Creditos",aboutGame),
+        ("Salir",exitGame)
+    ]
+
+    pygame.font.init()
+    main = Main.main(option)
+    background = Background.backgroundGame('sprites/fondo.jpg')
+
+    while not exit:
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                exit = True
+
+        background.drawBackground(SCREEN)
+        main.update()
+        main.draw(SCREEN)
+
+        pygame.display.flip()
+        pygame.time.delay(10)
+
+''' _______________________________________________________________________'''
+
 if __name__ == '__main__':
-    spaceWAR()
+    optionGame()

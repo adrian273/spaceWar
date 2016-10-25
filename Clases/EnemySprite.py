@@ -2,8 +2,8 @@ import pygame
 import Missile
 from random import randint
 
-class enemySprite(pygame.sprite.Sprite):
 
+class enemySprite(pygame.sprite.Sprite):
 
     def __init__(self, posx, posy, distance, spriteOne, spriteTwo):
         pygame.sprite.Sprite.__init__(self)
@@ -43,22 +43,21 @@ class enemySprite(pygame.sprite.Sprite):
         if self.timeChange == time:
             self.posImagen += 1
             self.timeChange += 1
-            if self.posImagen > len(self.listEnemy) - 1 :
+            if self.posImagen > len(self.listEnemy) - 1:
                 self.posImagen = 0
-
 
     def __moveEnemy(self):
         if self.count - 3:
             self.__moveSide()
-        else :
+        else:
             self.__declineEnemy()
 
     def __attackEnemy(self):
-        if (randint(0,100) < self.rangeShoot):
+        if (randint(0, 100) < self.rangeShoot):
             self.__shootEnemy()
 
     def __shootEnemy(self):
-        x,y = self.rect.center
+        x, y = self.rect.center
         missileEnemy = Missile.missile(x, y, 'sprites/balaFire.png', False)
         self.listShootE.append(missileEnemy)
 
@@ -66,7 +65,7 @@ class enemySprite(pygame.sprite.Sprite):
         if self.maxDecline == self.rect.top:
             self.count = 0
             self.maxDecline = self.rect.top + 10
-        else :
+        else:
             self.rect.top += 1
 
     def __moveSide(self):
@@ -75,7 +74,7 @@ class enemySprite(pygame.sprite.Sprite):
             if self.rect.left > self.limitRight:
                 self.RIGTH = False
                 self.count += 1
-        else :
+        else:
             self.rect.left = self.rect.left - self.speedE
             if self.rect.left < self.limitLeft:
                 self.RIGTH = True

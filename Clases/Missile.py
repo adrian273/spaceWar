@@ -1,5 +1,6 @@
 import pygame
 
+
 class missile(pygame.sprite.Sprite):
     def __init__(self, posx, posy, route, character):
         pygame.sprite.Sprite.__init__(self)
@@ -13,9 +14,9 @@ class missile(pygame.sprite.Sprite):
         self.shootCharacter = character
 
     def moveMissile(self):
-        if self.shootCharacter is True :
+        if self.shootCharacter is True:
             self.rect.top = self.rect.top - self.speedMissile
-        else :
+        else:
             self.rect.top = self.rect.top + self.speedMissile
 
     def drawMissile(self, surface):

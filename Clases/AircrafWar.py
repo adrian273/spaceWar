@@ -6,7 +6,7 @@ import Missile
 class aircrafWar(pygame.sprite.Sprite):
 
     ''' iniciando pygame.sprite '''
-    def __init__(self,WIDTH,HEIGHT):
+    def __init__(self, WIDTH, HEIGHT):
         pygame.sprite.Sprite.__init__(self)
 
         self.spriteAircrafWar = pygame.image.load('sprites/nave.gif')
