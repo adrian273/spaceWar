@@ -5,7 +5,7 @@ import Option
 class main:
     def __init__(self, options):
         self.options = []
-        font = pygame.font.Font("Fonts/dejavu.ttf", 20)
+        font = pygame.font.Font("Fonts/Blazed.ttf", 20)
         x = 105
         y = 305
         reference = 1

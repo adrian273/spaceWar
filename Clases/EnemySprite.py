@@ -25,6 +25,8 @@ class enemySprite(pygame.sprite.Sprite):
         self.timeChange = 1
         self.rangeShoot = 1
 
+        self.conquest = False
+
         self.RIGTH = True
         self.count = 0
         self.maxDecline = self.rect.top + 40
@@ -38,13 +40,14 @@ class enemySprite(pygame.sprite.Sprite):
 
     ''' comportamiento de enemigo '''
     def behaviorEnemy(self, time):
-        self.__moveEnemy()
-        self.__attackEnemy()
-        if self.timeChange == time:
-            self.posImagen += 1
-            self.timeChange += 1
-            if self.posImagen > len(self.listEnemy) - 1:
-                self.posImagen = 0
+        if self.conquest == False:
+            self.__moveEnemy()
+            self.__attackEnemy()
+            if self.timeChange == time:
+                self.posImagen += 1
+                self.timeChange += 1
+                if self.posImagen > len(self.listEnemy) - 1:
+                    self.posImagen = 0
 
     def __moveEnemy(self):
         if self.count - 3:
@@ -58,7 +61,7 @@ class enemySprite(pygame.sprite.Sprite):
 
     def __shootEnemy(self):
         x, y = self.rect.center
-        missileEnemy = Missile.missile(x, y, 'sprites/balaFire.png', False)
+        missileEnemy = Missile.missile(x, y, 'sprites/balaEnemy2.png', False)
         self.listShootE.append(missileEnemy)
 
     def __declineEnemy(self):

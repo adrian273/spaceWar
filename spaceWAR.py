@@ -26,6 +26,17 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 
 pygame.init()
 pygame.display.set_caption(' Space War v0.0.1')
+FONT = pygame.font.Font("Fonts/Blazed.ttf", 45)
+
+'''
+    __________________________________________________________________________________________________
+    @detener juego al ganar el enemigo
+'''
+def stopAll():
+    for enemy in LISTE:
+        for shoot in enemy.listShootE:
+            enemy.listShootE.remove(shoot)
+        enemy.conquest = True
 
 '''
     __________________________________________________________________________________________________
@@ -61,6 +72,7 @@ def spaceWAR():
     BACKGROUND = Background.backgroundGame('sprites/fondo-espacial.jpg')
     PLAYER = AircrafWar.aircrafWar(WIDTH, HEIGHT)
     TIME = pygame.time.Clock()
+    inGame = True #new var
     loadEnemy()
     TXTtime = pygame.font.SysFont('Arial',20)
     count = 0
@@ -76,21 +88,19 @@ def spaceWAR():
                 pygame.quit()
                 sys.exit()
             ''' eventos del teclado '''
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_LEFT:
-                    PLAYER.moveLeft()
-                elif event.key == K_RIGHT:
-                    PLAYER.moveRight()
-                elif event.key == K_s:
-                    x, y = PLAYER.rect.center
-                    PLAYER.shootMissile(x, y)
-                elif event.key == K_UP:
-                    PLAYER.moveTop()
-                elif event.key == K_DOWN:
-                    PLAYER.moveBottom()
-                elif event.key == K_q:
-                    pygame.quit()
-                    sys.exit()
+            if inGame:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == K_LEFT:
+                        PLAYER.moveLeft()
+                    elif event.key == K_RIGHT:
+                        PLAYER.moveRight()
+                    elif event.key == K_s:
+                        x, y = PLAYER.rect.center
+                        PLAYER.shootMissile(x, y)
+                    elif event.key == K_UP:
+                        PLAYER.moveTop()
+                    elif event.key == K_DOWN:
+                        PLAYER.moveBottom()
 
 
         if len(PLAYER.listShoot) > 0:
@@ -113,13 +123,21 @@ def spaceWAR():
                 e.behaviorEnemy(TIME2)
                 e.drawEnemy(SCREEN)
                 if e.rect.colliderect(PLAYER.rect):
-                    pass
+                    #new modific
+                    PLAYER.destroy()
+                    inGame = False
+                    stopAll()
+
+
                 if len(e.listShootE) > 0:
                     for m in e.listShootE:
                         m.drawMissile(SCREEN)
                         m.moveMissile()
                         if m.rect.colliderect(PLAYER.rect):
-                            pass
+                                PLAYER.destroy()
+                                inGame = False
+                                stopAll()
+
                         if m.rect.top > 880:
                             e.listShootE.remove(m)
                         else:
@@ -129,13 +147,18 @@ def spaceWAR():
                                     e.listShootE.remove(m)
                                     count += 3
 
-        txtCountEnemy = TXTtime.render("puntos :" + str(count), 0 , (255,0,46))
-        txtLifePlayer = TXTtime.render("Vidas:" + str(LIFEPlAYER), 0, (255,0,46))
+        txtCountEnemy = TXTtime.render("puntos :" + str(count), 0 , (255, 0, 46))
+        txtLifePlayer = TXTtime.render("Vidas:" + str(LIFEPlAYER), 0, (255, 0, 46))
+        txtGameOver = FONT.render("Game OVER", 0, (255, 0, 0), (255, 255, 255))
 
         SCREEN.blit(txtLifePlayer,(390,0))
         SCREEN.blit(txtCountEnemy,(780,0))
         SCREEN.blit(TXTRenderTime,(0,0))
         PLAYER.drawSpriteAircrafWar(SCREEN)
+
+        if inGame == False:
+            pygame.mixer.music.fadeout(3000)
+            SCREEN.blit(txtGameOver, (250, 350))
         pygame.display.update()
 
 '''
@@ -188,13 +211,14 @@ def optionGame():
     pygame.font.init()
     main = Main.main(option)
     background = Background.backgroundGame('sprites/fondo.jpg')
-
+    TitleMain = FONT.render("Space WAR", 0, (255, 255, 255))
     while not exit:
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 exit = True
 
         background.drawBackground(SCREEN)
+        SCREEN.blit(TitleMain, (250, 150))
         main.update()
         main.draw(SCREEN)
 

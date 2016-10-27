@@ -10,6 +10,7 @@ class aircrafWar(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.spriteAircrafWar = pygame.image.load('sprites/nave.gif')
+        self.spriteAircrafWarDestroy = pygame.image.load('sprites/destroyPlayer.png')
 
         self.rect = self.spriteAircrafWar.get_rect()
         self.rect.centerx = WIDTH / 2
@@ -19,7 +20,8 @@ class aircrafWar(pygame.sprite.Sprite):
         self.life = True
         self.speedAircrafWar = 16
 
-        self.soundMissile = pygame.mixer.Sound('sounds/pistola_1.wav')
+        self.soundMissile = pygame.mixer.Sound('sounds/disparos.wav')
+        self.soundDestroy = pygame.mixer.Sound('sounds/explosionGranade.wav')
 
     ''' dibujar sprite '''
     def drawSpriteAircrafWar(self, surface):
@@ -54,3 +56,11 @@ class aircrafWar(pygame.sprite.Sprite):
             self.rect.bottom += self.speedAircrafWar
             if self.rect.bottom > 680:
                 self.rect.bottom = 680
+
+    def destroy(self):
+
+        self.life = False
+        self.speedAircrafWar = 0
+
+        self.spriteAircrafWar = self.spriteAircrafWarDestroy
+        self.soundDestroy.play()
