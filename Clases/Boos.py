@@ -3,24 +3,19 @@ import Missile
 from random import randint
 
 
-class enemySprite(pygame.sprite.Sprite):
+class boos(pygame.sprite.Sprite):
 
-    def __init__(self, posx, posy, distance, spriteOne, spriteTwo):
+    def __init__(self, posx, posy, distance, spriteOne):
         pygame.sprite.Sprite.__init__(self)
-        self.spriteE1 = pygame.image.load(spriteOne)
-        self.spriteE2 = pygame.image.load(spriteTwo)
+        self.spriteBoos = pygame.image.load(spriteOne)
 
-        self.listEnemy = [self.spriteE1, self.spriteE2]
-        self.posImagen = 0
-        self.spriteE = self.listEnemy[self.posImagen]
-
-        self.rect = self.spriteE.get_rect()
+        self.rect = self.spriteBoos.get_rect()
         self.rect.top = posy
         self.rect.left = posx
 
         self.speedShoot = 2
         self.speedE = 5
-        self.listShootE = []
+        self.listShootB = []
 
         self.timeChange = 1
         self.rangeShoot = 1
@@ -29,17 +24,16 @@ class enemySprite(pygame.sprite.Sprite):
 
         self.RIGTH = True
         self.count = 0
-        self.maxDecline = self.rect.top + 40
+        self.maxDecline = self.rect.top + 100
 
         self.limitRight = posx + distance
         self.limitLeft = posx - distance
 
-    def drawEnemy(self, surface):
-        self.spriteE = self.listEnemy[self.posImagen]
-        surface.blit(self.spriteE, self.rect)
+    def drawBoos(self, surface):
+        surface.blit(self.spriteBoos, self.rect)
 
     ''' comportamiento de enemigo '''
-    def behaviorEnemy(self, time):
+    def behaviorBoos(self, time):
         if self.conquest == False:
             self.__moveEnemy()
             self.__attackEnemy()
@@ -62,7 +56,7 @@ class enemySprite(pygame.sprite.Sprite):
     def __shootEnemy(self):
         x, y = self.rect.center
         missileEnemy = Missile.missile(x, y, 'sprites/balaEnemy2.png', False)
-        self.listShootE.append(missileEnemy)
+        self.listShootB.append(missileEnemy)
 
     def __declineEnemy(self):
         if self.maxDecline == self.rect.top:
